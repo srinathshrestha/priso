@@ -1,0 +1,12 @@
+# Build artifacts
+*.o
+scenelang
+.*/
+# macOS
+.DS_Store
+
+# Hidden directories
+.*/
+*.swp
+*.swo
+*~

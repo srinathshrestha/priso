@@ -1,0 +1,8 @@
+canvas 800 600 "Red Sphere"
+background #111122
+camera 0 2 -8
+
+light { type directional  pos 5 10 5  color #ffffff  intensity 1.0 }
+light { type ambient  color #333333  intensity 0.3 }
+
+sphere { pos 0 0 0  radius 2  color #ff0000 }
