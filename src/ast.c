@@ -4,6 +4,7 @@
 
 Scene *scene_create(void) {
     Scene *scene = calloc(1, sizeof(Scene));
+    if (!scene) return NULL;
     scene->settings.width = 800;
     scene->settings.height = 600;
     strcpy(scene->settings.title, "Prismo");
@@ -12,21 +13,28 @@ Scene *scene_create(void) {
     scene->settings.has_camera = 0;
     scene->node_capacity = 16;
     scene->nodes = calloc(scene->node_capacity, sizeof(ASTNode *));
+    if (!scene->nodes) { free(scene); return NULL; }
     return scene;
 }
 
 void scene_add_node(Scene *scene, ASTNode *node) {
     if (scene->node_count >= scene->node_capacity) {
-        scene->node_capacity *= 2;
-        scene->nodes = realloc(scene->nodes, scene->node_capacity * sizeof(ASTNode *));
+        int new_cap = scene->node_capacity * 2;
+        ASTNode **tmp = realloc(scene->nodes, new_cap * sizeof(ASTNode *));
+        if (!tmp) return;
+        scene->nodes = tmp;
+        scene->node_capacity = new_cap;
     }
     scene->nodes[scene->node_count++] = node;
 }
 
 void group_add_child(GroupNode *group, ASTNode *node) {
     if (group->child_count >= group->child_capacity) {
-        group->child_capacity = group->child_capacity == 0 ? 8 : group->child_capacity * 2;
-        group->children = realloc(group->children, group->child_capacity * sizeof(ASTNode *));
+        int new_cap = group->child_capacity == 0 ? 8 : group->child_capacity * 2;
+        ASTNode **tmp = realloc(group->children, new_cap * sizeof(ASTNode *));
+        if (!tmp) return;
+        group->children = tmp;
+        group->child_capacity = new_cap;
     }
     group->children[group->child_count++] = node;
 }

@@ -94,9 +94,9 @@ static void draw_syntax_highlight(struct nk_context *ctx, Editor *e,
     float pad_y = ctx->style.edit.padding.y;
 
     // First pass: build a color map for each character (comment-aware)
-    // We need to handle comments specially since the lexer skips them
-    struct nk_color *char_colors = (struct nk_color *)malloc(e->text_len * sizeof(struct nk_color));
-    if (!char_colors) return;
+    // Static buffer avoids per-frame malloc (max 64K chars * 4 bytes = 256KB)
+    static struct nk_color char_colors[EDITOR_MAX_TEXT];
+    if (e->text_len > EDITOR_MAX_TEXT) return;
 
     struct nk_color comment_color = nk_rgb(100, 110, 120);
     struct nk_color default_color = nk_rgb(180, 180, 180);
@@ -177,7 +177,6 @@ static void draw_syntax_highlight(struct nk_context *ctx, Editor *e,
         col++;
     }
 
-    free(char_colors);
 }
 
 // ---- Editor API ----

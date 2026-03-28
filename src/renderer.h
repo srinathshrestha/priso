@@ -29,6 +29,9 @@ typedef struct {
     unsigned int circle_vao, circle_vbo;
     int circle_vert_count;
 
+    // Reusable dynamic 2D buffer (for triangles, lines, etc.)
+    unsigned int dyn_vao, dyn_vbo;
+
     // matrices
     Mat4 projection_3d;
     Mat4 view;

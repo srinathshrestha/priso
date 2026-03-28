@@ -106,7 +106,7 @@ static ASTNode *parse_circle(Parser *p) {
     node->data.circle.radius = 50;
 
     expect(p, TOK_LBRACE, "{");
-    while (!check(p, TOK_RBRACE) && !check(p, TOK_EOF)) {
+    while (!check(p, TOK_RBRACE) && !check(p, TOK_EOF) && !p->had_error) {
         if (match(p, TOK_RADIUS)) {
             node->data.circle.radius = expect_number(p);
         } else if (!parse_common_prop(p, &node->data.circle.props)) {
@@ -126,7 +126,7 @@ static ASTNode *parse_rect(Parser *p) {
     node->data.rect.size = (Vec2){100, 100};
 
     expect(p, TOK_LBRACE, "{");
-    while (!check(p, TOK_RBRACE) && !check(p, TOK_EOF)) {
+    while (!check(p, TOK_RBRACE) && !check(p, TOK_EOF) && !p->had_error) {
         if (match(p, TOK_SIZE)) {
             node->data.rect.size.x = expect_number(p);
             node->data.rect.size.y = expect_number(p);
@@ -147,7 +147,7 @@ static ASTNode *parse_line(Parser *p) {
     node->data.line.width = 1.0f;
 
     expect(p, TOK_LBRACE, "{");
-    while (!check(p, TOK_RBRACE) && !check(p, TOK_EOF)) {
+    while (!check(p, TOK_RBRACE) && !check(p, TOK_EOF) && !p->had_error) {
         if (match(p, TOK_FROM)) {
             node->data.line.from.x = expect_number(p);
             node->data.line.from.y = expect_number(p);
@@ -172,7 +172,7 @@ static ASTNode *parse_triangle(Parser *p) {
     node->data.triangle.props = default_props();
 
     expect(p, TOK_LBRACE, "{");
-    while (!check(p, TOK_RBRACE) && !check(p, TOK_EOF)) {
+    while (!check(p, TOK_RBRACE) && !check(p, TOK_EOF) && !p->had_error) {
         if (match(p, TOK_P1)) {
             node->data.triangle.p1.x = expect_number(p);
             node->data.triangle.p1.y = expect_number(p);
@@ -200,7 +200,7 @@ static ASTNode *parse_text(Parser *p) {
     strcpy(node->data.text.content, "");
 
     expect(p, TOK_LBRACE, "{");
-    while (!check(p, TOK_RBRACE) && !check(p, TOK_EOF)) {
+    while (!check(p, TOK_RBRACE) && !check(p, TOK_EOF) && !p->had_error) {
         if (match(p, TOK_CONTENT)) {
             expect(p, TOK_STRING, "string");
             int len = p->previous.length < 255 ? p->previous.length : 255;
@@ -227,7 +227,7 @@ static ASTNode *parse_cube(Parser *p) {
     node->data.cube.size = (Vec3){1, 1, 1};
 
     expect(p, TOK_LBRACE, "{");
-    while (!check(p, TOK_RBRACE) && !check(p, TOK_EOF)) {
+    while (!check(p, TOK_RBRACE) && !check(p, TOK_EOF) && !p->had_error) {
         if (match(p, TOK_SIZE)) {
             node->data.cube.size.x = expect_number(p);
             if (check(p, TOK_NUMBER)) node->data.cube.size.y = expect_number(p);
@@ -251,7 +251,7 @@ static ASTNode *parse_sphere(Parser *p) {
     node->data.sphere.radius = 1.0f;
 
     expect(p, TOK_LBRACE, "{");
-    while (!check(p, TOK_RBRACE) && !check(p, TOK_EOF)) {
+    while (!check(p, TOK_RBRACE) && !check(p, TOK_EOF) && !p->had_error) {
         if (match(p, TOK_RADIUS)) {
             node->data.sphere.radius = expect_number(p);
         } else if (!parse_common_prop(p, &node->data.sphere.props)) {
@@ -272,7 +272,7 @@ static ASTNode *parse_pyramid(Parser *p) {
     node->data.pyramid.height = 3.0f;
 
     expect(p, TOK_LBRACE, "{");
-    while (!check(p, TOK_RBRACE) && !check(p, TOK_EOF)) {
+    while (!check(p, TOK_RBRACE) && !check(p, TOK_EOF) && !p->had_error) {
         if (match(p, TOK_BASE)) {
             node->data.pyramid.base = expect_number(p);
         } else if (match(p, TOK_HEIGHT)) {
@@ -294,7 +294,7 @@ static ASTNode *parse_plane_shape(Parser *p) {
     node->data.plane.size = (Vec2){10, 10};
 
     expect(p, TOK_LBRACE, "{");
-    while (!check(p, TOK_RBRACE) && !check(p, TOK_EOF)) {
+    while (!check(p, TOK_RBRACE) && !check(p, TOK_EOF) && !p->had_error) {
         if (match(p, TOK_SIZE)) {
             node->data.plane.size.x = expect_number(p);
             node->data.plane.size.y = expect_number(p);
@@ -316,7 +316,7 @@ static ASTNode *parse_cylinder(Parser *p) {
     node->data.cylinder.height = 2.0f;
 
     expect(p, TOK_LBRACE, "{");
-    while (!check(p, TOK_RBRACE) && !check(p, TOK_EOF)) {
+    while (!check(p, TOK_RBRACE) && !check(p, TOK_EOF) && !p->had_error) {
         if (match(p, TOK_RADIUS)) {
             node->data.cylinder.radius = expect_number(p);
         } else if (match(p, TOK_HEIGHT)) {
@@ -353,7 +353,7 @@ static ASTNode *parse_group(Parser *p) {
     }
 
     expect(p, TOK_LBRACE, "{");
-    while (!check(p, TOK_RBRACE) && !check(p, TOK_EOF)) {
+    while (!check(p, TOK_RBRACE) && !check(p, TOK_EOF) && !p->had_error) {
         // try common properties first
         if (parse_common_prop(p, &node->data.group.props)) {
             continue;
@@ -381,7 +381,7 @@ static ASTNode *parse_light(Parser *p) {
     node->data.light.intensity = 1.0f;
 
     expect(p, TOK_LBRACE, "{");
-    while (!check(p, TOK_RBRACE) && !check(p, TOK_EOF)) {
+    while (!check(p, TOK_RBRACE) && !check(p, TOK_EOF) && !p->had_error) {
         if (match(p, TOK_TYPE)) {
             if (match(p, TOK_POINT)) node->data.light.type = LIGHT_POINT;
             else if (match(p, TOK_DIRECTIONAL)) node->data.light.type = LIGHT_DIRECTIONAL;

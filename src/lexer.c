@@ -18,7 +18,7 @@ static void skip_whitespace_and_comments(Lexer *lexer) {
         } else if (c == '\n') {
             lexer->line++;
             lexer->current++;
-        } else if (c == '#' && !isxdigit(lexer->current[1])) {
+        } else if (c == '#' && !isxdigit((unsigned char)lexer->current[1])) {
             // line comment — # followed by non-hex char
             while (*lexer->current && *lexer->current != '\n')
                 lexer->current++;
@@ -66,7 +66,7 @@ static Token lex_hex_color(Lexer *lexer) {
     lexer->current++; // skip #
 
     const char *hex_start = lexer->current;
-    while (isxdigit(*lexer->current))
+    while (isxdigit((unsigned char)*lexer->current))
         lexer->current++;
 
     int hex_len = (int)(lexer->current - hex_start);
@@ -90,12 +90,12 @@ static Token lex_number(Lexer *lexer) {
     if (*lexer->current == '-')
         lexer->current++;
 
-    while (isdigit(*lexer->current))
+    while (isdigit((unsigned char)*lexer->current))
         lexer->current++;
 
-    if (*lexer->current == '.' && isdigit(lexer->current[1])) {
+    if (*lexer->current == '.' && isdigit((unsigned char)lexer->current[1])) {
         lexer->current++; // skip dot
-        while (isdigit(*lexer->current))
+        while (isdigit((unsigned char)*lexer->current))
             lexer->current++;
     }
 
@@ -185,7 +185,7 @@ static const Keyword keywords[] = {
 static Token lex_identifier(Lexer *lexer) {
     const char *start = lexer->current;
 
-    while (isalnum(*lexer->current) || *lexer->current == '_')
+    while (isalnum((unsigned char)*lexer->current) || *lexer->current == '_')
         lexer->current++;
 
     int length = (int)(lexer->current - start);
@@ -211,12 +211,12 @@ Token lexer_next(Lexer *lexer) {
     char c = *lexer->current;
 
     // hex color: # followed by hex digit
-    if (c == '#' && isxdigit(lexer->current[1])) {
+    if (c == '#' && isxdigit((unsigned char)lexer->current[1])) {
         return lex_hex_color(lexer);
     }
 
     // number (including negative)
-    if (isdigit(c) || (c == '-' && isdigit(lexer->current[1]))) {
+    if (isdigit((unsigned char)c) || (c == '-' && isdigit((unsigned char)lexer->current[1]))) {
         return lex_number(lexer);
     }
 
@@ -226,7 +226,7 @@ Token lexer_next(Lexer *lexer) {
     }
 
     // identifier / keyword
-    if (isalpha(c) || c == '_') {
+    if (isalpha((unsigned char)c) || c == '_') {
         return lex_identifier(lexer);
     }
 
@@ -240,6 +240,7 @@ Token lexer_next(Lexer *lexer) {
         return make_token(lexer, TOK_RBRACE, start, 1);
     }
 
+    lexer->current++; // skip the bad character to avoid infinite loops
     return error_token(lexer, "unexpected character");
 }
 

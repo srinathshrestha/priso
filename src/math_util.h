@@ -94,6 +94,7 @@ static inline Mat4 mat4_lookat(float ex, float ey, float ez,
                                 float ux, float uy, float uz) {
     float fx = cx - ex, fy = cy - ey, fz = cz - ez;
     float fl = sqrtf(fx*fx + fy*fy + fz*fz);
+    if (fl < 1e-8f) return mat4_identity();
     fx /= fl; fy /= fl; fz /= fl;
 
     // side = f x up
@@ -101,6 +102,7 @@ static inline Mat4 mat4_lookat(float ex, float ey, float ez,
     float sy = fz * ux - fx * uz;
     float sz = fx * uy - fy * ux;
     float sl = sqrtf(sx*sx + sy*sy + sz*sz);
+    if (sl < 1e-8f) return mat4_identity();
     sx /= sl; sy /= sl; sz /= sl;
 
     // u = s x f

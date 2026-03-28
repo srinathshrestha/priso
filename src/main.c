@@ -38,11 +38,13 @@ static char *read_file(const char *path) {
     }
     fseek(f, 0, SEEK_END);
     long size = ftell(f);
+    if (size < 0) { fclose(f); return NULL; }
     rewind(f);
 
     char *buf = malloc(size + 1);
-    fread(buf, 1, size, f);
-    buf[size] = '\0';
+    if (!buf) { fclose(f); return NULL; }
+    size_t nread = fread(buf, 1, size, f);
+    buf[nread] = '\0';
     fclose(f);
     return buf;
 }
@@ -86,6 +88,8 @@ static int run_cli(const char *filepath) {
     glfwSetErrorCallback(error_callback);
     if (!glfwInit()) {
         fprintf(stderr, "Failed to init GLFW\n");
+        scene_free(scene);
+        free(source);
         return 1;
     }
 
@@ -101,6 +105,8 @@ static int run_cli(const char *filepath) {
 
     if (!window) {
         fprintf(stderr, "Failed to create window\n");
+        scene_free(scene);
+        free(source);
         glfwTerminate();
         return 1;
     }
@@ -126,6 +132,9 @@ static int run_cli(const char *filepath) {
     Renderer renderer;
     if (!renderer_init(&renderer)) {
         fprintf(stderr, "Failed to init renderer\n");
+        scene_free(scene);
+        free(source);
+        glfwDestroyWindow(window);
         glfwTerminate();
         return 1;
     }
@@ -139,12 +148,23 @@ static int run_cli(const char *filepath) {
 
             source = read_file(filepath);
             if (source) {
-                scene = parse(source);
-                if (scene) {
+                Scene *new_scene = parse(source);
+                if (new_scene) {
+                    scene = new_scene;
                     glfwSetWindowSize(window, scene->settings.width, scene->settings.height);
                     glfwSetWindowTitle(window, scene->settings.title);
+                } else {
+                    fprintf(stderr, "Parse failed, keeping previous scene\n");
                 }
+            } else {
+                fprintf(stderr, "Failed to read file, keeping previous scene\n");
             }
+        }
+
+        if (!scene) {
+            glfwSwapBuffers(window);
+            glfwPollEvents();
+            continue;
         }
 
         int fb_w, fb_h;

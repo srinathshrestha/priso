@@ -317,6 +317,14 @@ int renderer_init(Renderer *r) {
     gen_quad_2d(r);
     gen_circle_2d(r);
 
+    // Reusable dynamic buffer for 2D lines/triangles
+    glGenVertexArrays(1, &r->dyn_vao);
+    glGenBuffers(1, &r->dyn_vbo);
+    glBindVertexArray(r->dyn_vao);
+    glBindBuffer(GL_ARRAY_BUFFER, r->dyn_vbo);
+    glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 2 * sizeof(float), (void*)0);
+    glEnableVertexAttribArray(0);
+
     glEnable(GL_DEPTH_TEST);
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
@@ -438,14 +446,9 @@ static void draw_2d_triangle(Renderer *r, ShapeProps *props, Vec2 p1, Vec2 p2, V
 
     float verts[] = { p1.x, p1.y, p2.x, p2.y, p3.x, p3.y };
 
-    unsigned int vao, vbo;
-    glGenVertexArrays(1, &vao);
-    glGenBuffers(1, &vbo);
-    glBindVertexArray(vao);
-    glBindBuffer(GL_ARRAY_BUFFER, vbo);
+    glBindVertexArray(r->dyn_vao);
+    glBindBuffer(GL_ARRAY_BUFFER, r->dyn_vbo);
     glBufferData(GL_ARRAY_BUFFER, sizeof(verts), verts, GL_STREAM_DRAW);
-    glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 2 * sizeof(float), (void*)0);
-    glEnableVertexAttribArray(0);
 
     Mat4 model = mat4_identity();
     set_mat4(s, "uProj", &r->projection_2d);
@@ -454,9 +457,6 @@ static void draw_2d_triangle(Renderer *r, ShapeProps *props, Vec2 p1, Vec2 p2, V
     set_float(s, "uOpacity", props->opacity);
 
     glDrawArrays(GL_TRIANGLES, 0, 3);
-
-    glDeleteBuffers(1, &vbo);
-    glDeleteVertexArrays(1, &vao);
 }
 
 static void draw_2d_line(Renderer *r, ShapeProps *props, Vec2 from, Vec2 to, float width) {
@@ -465,14 +465,9 @@ static void draw_2d_line(Renderer *r, ShapeProps *props, Vec2 from, Vec2 to, flo
 
     float verts[] = { from.x, from.y, to.x, to.y };
 
-    unsigned int vao, vbo;
-    glGenVertexArrays(1, &vao);
-    glGenBuffers(1, &vbo);
-    glBindVertexArray(vao);
-    glBindBuffer(GL_ARRAY_BUFFER, vbo);
+    glBindVertexArray(r->dyn_vao);
+    glBindBuffer(GL_ARRAY_BUFFER, r->dyn_vbo);
     glBufferData(GL_ARRAY_BUFFER, sizeof(verts), verts, GL_STREAM_DRAW);
-    glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 2 * sizeof(float), (void*)0);
-    glEnableVertexAttribArray(0);
 
     Mat4 model = mat4_identity();
     set_mat4(s, "uProj", &r->projection_2d);
@@ -482,9 +477,6 @@ static void draw_2d_line(Renderer *r, ShapeProps *props, Vec2 from, Vec2 to, flo
 
     glLineWidth(width);
     glDrawArrays(GL_LINES, 0, 2);
-
-    glDeleteBuffers(1, &vbo);
-    glDeleteVertexArrays(1, &vao);
 }
 
 // ---- Draw a single node ----
@@ -573,6 +565,7 @@ static void draw_node(Renderer *r, ASTNode *node) {
 
 void renderer_draw_scene(Renderer *r, Scene *scene) {
     SceneSettings *s = &scene->settings;
+    if (s->width <= 0 || s->height <= 0) return;
 
     glClearColor(s->background.r, s->background.g, s->background.b, 1.0f);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -653,4 +646,6 @@ void renderer_destroy(Renderer *r) {
     glDeleteBuffers(1, &r->quad_vbo);
     glDeleteVertexArrays(1, &r->circle_vao);
     glDeleteBuffers(1, &r->circle_vbo);
+    glDeleteVertexArrays(1, &r->dyn_vao);
+    glDeleteBuffers(1, &r->dyn_vbo);
 }
