@@ -1,8 +1,8 @@
-# SceneLang
+# Prismo
 
 A declarative scene description language and real-time renderer built from scratch in C with OpenGL.
 
-Write human-readable `.scene` files describing 2D and 3D objects, and SceneLang parses your code through a hand-written lexer and recursive descent parser, builds an AST, and renders the scene live in an OpenGL window. Edit your scene file, press R, and see changes instantly — no recompilation needed.
+Write human-readable `.scene` files describing 2D and 3D objects, and Prismo parses your code through a hand-written lexer and recursive descent parser, builds an AST, and renders the scene live in an OpenGL window. Edit your scene file, press R, and see changes instantly — no recompilation needed.
 
 ---
 
@@ -42,7 +42,7 @@ Write human-readable `.scene` files describing 2D and 3D objects, and SceneLang 
 ```bash
 brew install glfw
 make
-./scenelang examples/demo.scene
+./prismo examples/demo.scene
 ```
 
 A window opens with your rendered scene. Press `R` to hot-reload after editing the file.
@@ -51,13 +51,13 @@ A window opens with your rendered scene. Press `R` to hot-reload after editing t
 
 ## How It Works
 
-SceneLang is a complete compiler frontend + graphics backend in ~1500 lines of C:
+Prismo is a complete compiler frontend + graphics backend in ~1500 lines of C:
 
 ```
 your_scene.scene  →  Lexer  →  Tokens  →  Parser  →  AST  →  Renderer  →  OpenGL Window
 ```
 
-1. You write a `.scene` file using the SceneLang DSL
+1. You write a `.scene` file using the Prismo DSL
 2. The **lexer** (tokenizer) breaks your source into tokens — keywords, numbers, hex colors, strings, braces
 3. The **parser** (recursive descent) consumes those tokens and builds an **AST** (Abstract Syntax Tree) — a tree of nodes representing your scene
 4. The **renderer** walks the AST and translates each node into OpenGL draw calls — setting up shaders, matrices, and geometry
@@ -74,7 +74,7 @@ Open two terminals side by side (or use Emacs with a split):
 
 ```bash
 # Terminal 1 — renderer (leave this running)
-./scenelang examples/demo.scene
+./prismo examples/demo.scene
 
 # Terminal 2 — editor
 emacs -nw examples/demo.scene
@@ -87,7 +87,7 @@ You can also create new scene files from scratch:
 ```bash
 emacs -nw examples/myworld.scene
 # write your scene code...
-./scenelang examples/myworld.scene
+./prismo examples/myworld.scene
 ```
 
 ---
@@ -110,7 +110,7 @@ These are top-level commands that configure the window and camera. They go at th
 ```
 canvas <width> <height> "<title>"
 ```
-Sets the window dimensions and title bar text. Default is `800 600 "SceneLang"`.
+Sets the window dimensions and title bar text. Default is `800 600 "Prismo"`.
 
 ```
 background <hex_color>
@@ -347,9 +347,9 @@ light { type ambient  color #222244  intensity 0.25 }
 ## Full Example
 
 ```
-// demo.scene — a complete SceneLang scene
+// demo.scene — a complete Prismo scene
 
-canvas 900 650 "SceneLang Demo"
+canvas 900 650 "Prismo Demo"
 background #0a0a1a
 
 camera 0 3 -10
@@ -407,7 +407,7 @@ On hot-reload (press R), the entire pipeline re-runs from file read to render. T
 ### Source Files
 
 ```
-scenelang/
+prismo/
 ├── src/
 │   ├── main.c           Entry point. GLFW window, file I/O, main loop, hot reload.
 │   ├── lexer.h/c        Tokenizer. Converts source text into a stream of tokens.
@@ -495,7 +495,7 @@ The renderer (`src/renderer.c`) does three things:
 
 ```bash
 # Clone or extract the project
-cd scenelang
+cd prismo
 
 # Install GLFW
 brew install glfw
@@ -504,7 +504,7 @@ brew install glfw
 make
 
 # Run
-./scenelang examples/demo.scene
+./prismo examples/demo.scene
 
 # Clean build artifacts
 make clean

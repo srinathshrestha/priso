@@ -6,7 +6,7 @@ Scene *scene_create(void) {
     Scene *scene = calloc(1, sizeof(Scene));
     scene->settings.width = 800;
     scene->settings.height = 600;
-    strcpy(scene->settings.title, "SceneLang");
+    strcpy(scene->settings.title, "Prismo");
     scene->settings.background = (Color){0.05f, 0.05f, 0.1f, 1.0f};
     scene->settings.camera = (Vec3){0, 0, -10};
     scene->settings.has_camera = 0;

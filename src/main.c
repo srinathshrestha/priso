@@ -115,7 +115,7 @@ static int run_cli(const char *filepath) {
 
     glEnable(GL_MULTISAMPLE);
 
-    printf("SceneLang renderer\n");
+    printf("Prismo renderer\n");
     printf("  OpenGL: %s\n", glGetString(GL_VERSION));
     printf("  File:   %s\n", filepath);
     printf("  Canvas: %dx%d\n", scene->settings.width, scene->settings.height);
@@ -199,7 +199,7 @@ static int run_editor(void) {
     glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
     glfwWindowHint(GLFW_SAMPLES, 4);
 
-    GLFWwindow *window = glfwCreateWindow(1400, 900, "SceneLang Editor", NULL, NULL);
+    GLFWwindow *window = glfwCreateWindow(1400, 900, "Prismo Editor", NULL, NULL);
     if (!window) {
         fprintf(stderr, "Failed to create window\n");
         glfwTerminate();
@@ -210,7 +210,7 @@ static int run_editor(void) {
     glfwSwapInterval(1);
     glEnable(GL_MULTISAMPLE);
 
-    printf("SceneLang Editor\n");
+    printf("Prismo Editor\n");
     printf("  OpenGL: %s\n", glGetString(GL_VERSION));
     printf("\nControls:\n");
     printf("  Cmd+Enter - run scene\n");

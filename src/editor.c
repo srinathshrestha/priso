@@ -464,7 +464,7 @@ void editor_ui(Editor *e, struct nk_context *ctx, int win_w, int win_h) {
                 nk_label(ctx, "", NK_TEXT_LEFT);
             }
             nk_layout_row_dynamic(ctx, 30, 1);
-            nk_label(ctx, "Write some SceneLang code and press Run!", NK_TEXT_CENTERED);
+            nk_label(ctx, "Write some Prismo code and press Run!", NK_TEXT_CENTERED);
         }
     }
     nk_end(ctx);

@@ -11,7 +11,7 @@ LDFLAGS += $(GLFW_LIBS)
 
 SRC = src/main.c src/lexer.c src/parser.c src/ast.c src/renderer.c src/editor.c
 OBJ = $(SRC:.c=.o)
-BIN = scenelang
+BIN = prismo
 
 all: $(BIN)
 
