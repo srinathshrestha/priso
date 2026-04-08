@@ -4,6 +4,9 @@ A scene description language with a built-in editor. Write simple, readable code
 
 Everything is built from scratch in C — the lexer, parser, renderer, and editor UI. No engines, no frameworks.
 
+
+![Editor View](Priso-ui-image.jpg)
+
 ## Quick Start
 
 ```bash

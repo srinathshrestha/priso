@@ -74,12 +74,10 @@ typedef enum {
 
 typedef struct {
     TokenType type;
-    const char *start;      // pointer into source
+    const char *start;
     int length;
     int line;
-
-    // parsed values
-    double num_value;
+    double num_value;     // parsed values
     float color_r, color_g, color_b;
 } Token;
 
